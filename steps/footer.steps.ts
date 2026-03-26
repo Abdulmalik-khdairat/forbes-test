@@ -22,7 +22,7 @@ When('I click the {string} logo in the footer', async ({ page }, logoName: strin
   const footer = page.locator('footer').first();
   const logoLink = footer.getByRole('link', { name: new RegExp(logoName, 'i') }).first();
   
-  await logoLink.scrollIntoViewIfNeeded();
+  await logoLink.scrollIntoViewIfNeeded(); 
   // Native click to bypass Playwright's strict viewport checks for complex footers
   await logoLink.evaluate((el: HTMLElement) => el.click());
 });
