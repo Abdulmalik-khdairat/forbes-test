@@ -1,26 +1,25 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
+import { ForbesHomePage } from '../pages/ForbesHomePage';
 
 const { Given, When, Then } = createBdd();
 
 Given('I navigate to the Forbes homepage', async ({ page }) => {
-  // Use commit to prevent network hangs from ad trackers
-  await page.goto('https://www.forbes.com/', { waitUntil: 'commit', timeout: 60000 });
-  // Wait for the footer to ensure the page structure is there
-  await expect(page.locator('footer').first()).toBeVisible({ timeout: 30000 });
+  const forbesHomePage = new ForbesHomePage(page);
+  await forbesHomePage.navigate();
 });
 
 Then('the {string} link should be visible in the footer', async ({ page }, linkName: string) => {
-  const footer = page.locator('footer').first();
-  const targetLink = footer.getByRole('link', { name: new RegExp('^\\\\s*' + linkName + '\\\\s*$|^' + linkName + '$', 'i') }).first();
+  const forbesHomePage = new ForbesHomePage(page);
+  const targetLink = forbesHomePage.getFooterLink(linkName);
   
   await targetLink.scrollIntoViewIfNeeded();
   await expect(targetLink).toBeVisible({ timeout: 15000 });
 });
 
 When('I click the {string} logo in the footer', async ({ page }, logoName: string) => {
-  const footer = page.locator('footer').first();
-  const logoLink = footer.getByRole('link', { name: new RegExp(logoName, 'i') }).first();
+  const forbesHomePage = new ForbesHomePage(page);
+  const logoLink = forbesHomePage.getFooterLogo(logoName);
   
   await logoLink.scrollIntoViewIfNeeded(); 
   // Native click to bypass Playwright's strict viewport checks for complex footers
